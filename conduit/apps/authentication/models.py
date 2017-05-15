@@ -29,7 +29,7 @@ class UserManager(BaseUserManager):
         if email is None:
             raise TypeError('Users must have an email address.')
 
-        user = self.model(username=username, email=serf.normalize_email(email))
+        user = self.model(username=username, email=self.normalize_email(email))
         user.set_password(password)
 
         user.save()
@@ -43,7 +43,7 @@ class UserManager(BaseUserManager):
         Superuser powers means that this use is an admin that can do anything
         they want.
         """
-        if password in None:
+        if password is None:
             raise TypeError('Superusers must have a password.')
 
         user = self.create_user(username, email, password)
@@ -58,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Each `User` needs a human-readable unique identifier that we can use to
     # represent the `User` in the UI. We want to index this column in the
     # database to improve lookup performance.
-    # username = models.CharField(db_index=True, max_length=255, unique=True)
+    username = models.CharField(db_index=True, max_length=255, unique=True)
 
     # We also need a way to contact the user and a way for the user to identify
     # themselves when logging in. Since we need an email address for contacting
