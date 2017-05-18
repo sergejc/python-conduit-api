@@ -1,6 +1,7 @@
 from django.conf.urls import url
-from .views import RegistratinAPIView
+from .views import (LoginAPIView, RegistratinAPIView, UserRetrieveUpdateAPIView)
 
 urlpatterns = [
-    url(r'^users/?$', RegistratinAPIView.as_view()),
+    url(r'^user/?$', UserRetrieveUpdateAPIView.as_view()),
+    url(r'^users/login/?$', LoginAPIView.as_view()),
 ]
