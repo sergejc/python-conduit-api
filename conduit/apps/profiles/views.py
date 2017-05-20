@@ -1,15 +1,16 @@
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .exceptions import ProfileDoesNotExist
 from .models import Profile
 from .renderers import ProfileJSONRenderer
 from .serializers import ProfileSerializer
 
 class ProfileRetrieveAPIView(RetrieveAPIView):
     permissions_class = (AllowAny,)
+    queryset = Profile.objects.select_related('user')
     renderer_class = (ProfileJSONRenderer,)
     serializer_class = ProfileSerializer
 
@@ -22,8 +23,9 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
             profile = Profile.objects.select_related('user').get(
                 user__usrname=username
             )
+            profile = self.queryset.get(user__usrname=username)
         except Profile.DoesNotExist:
-            raise ProfileDoesNotExist
+            raise NotFound('A profile with this username does not exist')
 
         serializer = self.serializer_class(profile)
 
